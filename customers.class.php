@@ -5,18 +5,22 @@ class Customer {
     public $name;
     public $email;
     public $mobile;
+	public $password; // text from HTML form
+	public $password_hashed; // hashed password
     private $noerrors = true;
     private $nameError = null;
     private $emailError = null;
     private $mobileError = null;
+	private $passwordError = null;
     private $title = "Customer";
-    private $tableName = "customer";
+    private $tableName = "customers";
     
     function create_record() { // display "create" form
         $this->generate_html_top (1);
         $this->generate_form_group("name", $this->nameError, $this->name, "autofocus");
         $this->generate_form_group("email", $this->emailError, $this->email);
         $this->generate_form_group("mobile", $this->mobileError, $this->mobile);
+		$this->generate_form_group("password", $this->passwordError, $this->password, "", "password");
         $this->generate_html_bottom (1);
     } // end function create_record()
     
@@ -64,13 +68,20 @@ class Customer {
      *   or Create form (if errors)
      */
     function insert_db_record () {
-        if ($this->fieldsAllValid ()) { // validate user input
+        if ($this->fieldsAllValid()) { // validate user input
             // if valid data, insert record into table
             $pdo = Database::connect();
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $sql = "INSERT INTO $this->tableName (name,email,mobile) values(?, ?, ?)";
+			$this->password_hashed = MD5($this->password);
+			// safe code
+            $sql = "INSERT INTO $this->tableName (name,email,mobile, password_hash) values(?, ?, ?, ?)";
+			// dangerous code
+			//$sql = "INSERT INTO $this->tableName (name,email,mobile) values('$this->name', '$this->email', '$this->mobile')";
             $q = $pdo->prepare($sql);
-            $q->execute(array($this->name,$this->email,$this->mobile));
+			// safe code
+            $q->execute(array($this->name, $this->email, $this->mobile, $this->password_hashed));
+			// dangerous code
+			//$q->execute(array());
             Database::disconnect();
             header("Location: $this->tableName.php"); // go back to "list"
         }
@@ -198,8 +209,9 @@ class Customer {
                     ";
     } // end function generate_html_bottom()
     
+	/*
     private function generate_form_group ($label, $labelError, $val, $modifier="") {
-        echo "<div class='form-group'";
+        echo "<div class='form-group";
         echo !empty($labelError) ? ' alert alert-danger ' : '';
         echo "'>";
         echo "<label class='control-label'>$label &nbsp;</label>";
@@ -207,6 +219,29 @@ class Customer {
         echo "<input "
             . "name='$label' "
             . "type='text' "
+            . "$modifier "
+            . "placeholder='$label' "
+            . "value='";
+        echo !empty($val) ? $val : '';
+        echo "'>";
+        if (!empty($labelError)) {
+            echo "<span class='help-inline'>";
+            echo "&nbsp;&nbsp;" . $labelError;
+            echo "</span>";
+        }
+        //echo "</div>"; // end div: class='controls'
+        echo "</div>"; // end div: class='form-group'
+    } // end function generate_form_group()
+	*/
+	 private function generate_form_group ($label, $labelError, $val, $modifier="", $fieldType="text") {
+        echo "<div class='form-group";
+        echo !empty($labelError) ? ' alert alert-danger ' : '';
+        echo "'>";
+        echo "<label class='control-label'>$label &nbsp;</label>";
+        //echo "<div class='controls'>";
+        echo "<input "
+            . "name='$label' "
+            . "type='$fieldType' "
             . "$modifier "
             . "placeholder='$label' "
             . "value='";
@@ -240,6 +275,7 @@ class Customer {
             $valid = false;
         }
         return $valid;
+		
     } // end function fieldsAllValid() 
     
     function list_records() {
@@ -257,6 +293,7 @@ class Customer {
             </head>
             <body>
                 <a href='https://github.com/Grimmjow91/Crud_OO' target='_blank'>Github</a><br />
+				<a href='http://csis.svsu.edu/~nmpremo1/cis355/crud_oo_diagram.vsdx' target='_blank'>Diagram</a><br />
                 <div class='container'>
                     <p class='row'>
                         <h3>$this->title" . "s" . "</h3>
@@ -306,5 +343,3 @@ class Customer {
     } // end function list_records()
     
 } // end class Customer
-
-?>
