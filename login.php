@@ -1,5 +1,10 @@
 <?php
-
+/* ---------------------------------------------------------------------------
+ * filename    : login.php
+ * author      : George Corser, gcorser@gmail.com
+ * description : This program logs the user in by setting $_SESSION variables
+ * ---------------------------------------------------------------------------
+ */
 // Start or resume session, and create: $_SESSION[] array
 session_start(); 
 // include the class that handles database connections
@@ -9,21 +14,23 @@ if ( !empty($_POST)) { // if $_POST filled then process the form
 	// initialize $_POST variables
 	$username = $_POST['username']; // username is email address
 	$password = $_POST['password'];
-	
-	$passwordhash = MD5($password);
+	$passwordHashed = MD5($password);
 	$labelError = "";
 		
 	// verify the username/password
 	$pdo = Database::connect();
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$sql = "SELECT * FROM customers WHERE email = ? AND password_hash = ? LIMIT 1";
+	$sql = "SELECT * FROM customers WHERE email = ? AND passwordHashed = ? LIMIT 1";
 	$q = $pdo->prepare($sql);
-	$q->execute(array($username,$passwordhash));
+	$q->execute(array($username,$passwordHashed));
 	$data = $q->fetch(PDO::FETCH_ASSOC);
 	
 	if($data) { // if successful login set session variables
 		// echo "success!";
 		$_SESSION['tJHSQRuoNnWUwLRe'] = $data['id'];
+		$_SESSION['name'] = $data['name'];
+		$_SESSION['email'] = $data['email'];
+		$_SESSION['mobile'] = $data['mobile'];
 		$sessionid = $data['id'];
 		Database::disconnect();
 		header("Location: customers.php ");
@@ -33,7 +40,7 @@ if ( !empty($_POST)) { // if $_POST filled then process the form
 	}
 	else { // display error message
 		Database::disconnect();
-		$labelError = "Incorrect username/password";
+		$labelError = "incorrect username/password";
 	}
 
 
@@ -69,14 +76,14 @@ if ( !empty($_POST)) { // if $_POST filled then process the form
 				<div class="control-group">
 					<label class="control-label">Password</label>
 					<div class="controls">
-						<input name="password" type="password" placeholder="password" required> 
+						<input name="password" type="password" placeholder="not your SVSU password, please" required> 
 					</div>	
 				</div> 
 
 				<div class="form-actions">
 					<button type="submit" class="btn btn-success">Sign in</button>
 					&nbsp; &nbsp;
-					<a class="btn btn-primary" href="fr_per_create2.php">Join</a>
+					<a class="btn btn-primary" href="Join.php">Join</a>
 				</div>
 				
 				<div>
@@ -90,7 +97,7 @@ if ( !empty($_POST)) { // if $_POST filled then process the form
 				</div>
 				
 				<footer>
-					<small>&copy; Copyright 2019, Your Dad
+					<small>&copy; Copyright 2019, George Corser
 					</small>
 				</footer>
 				

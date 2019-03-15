@@ -292,7 +292,8 @@ class Customer {
         echo "
             </head>
             <body>
-                <a href='https://github.com/cis355/PhpProject1' target='_blank'>Github</a><br />
+                <a href='https://github.com/Grimmjow91/Crud_OO' target='_blank'>Github</a><br />
+				<a href='http://csis.svsu.edu/~nmpremo1/cis355/crud_oo_diagram.vsdx' target='_blank'>CrudOO diagram</a><br />
                 <div class='container'>
                     <p class='row'>
                         <h3>$this->title" . "s" . "</h3>
