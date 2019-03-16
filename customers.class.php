@@ -274,6 +274,12 @@ class Customer {
             $this->mobileError = 'Please enter Mobile phone number';
             $valid = false;
         }
+		
+		if (empty($this->password)){
+			$this->passwordError ='Please enter a password';
+			$valid= false;
+		}
+		
         return $valid;
 		
     } // end function fieldsAllValid() 
@@ -294,12 +300,15 @@ class Customer {
             <body>
                 <a href='https://github.com/Grimmjow91/Crud_OO' target='_blank'>Github</a><br />
 				<a href='http://csis.svsu.edu/~nmpremo1/cis355/crud_oo_diagram.vsdx' target='_blank'>CrudOO diagram</a><br />
+				<a href='http://csis.svsu.edu/~nmpremo1/cis355/crud_oo_diagram_login.vsdx' target='_blank'>CrudOO diagram Login</a><br />
+				<a href='http://csis.svsu.edu/~nmpremo1/cis355/Crud_oo_Screen_flow.vsdx' target='_blank'>CrudOO screen flow diagram Login</a><br />
+				
                 <div class='container'>
                     <p class='row'>
                         <h3>$this->title" . "s" . "</h3>
                     </p>
                     <p>
-                        <a href='$this->tableName.php?fun=display_create_form' class='btn btn-success'>Create</a>
+                        <a href='$this->tableName.php?fun=insert_db_record' class='btn btn-success'>Create</a>
 						<a href='logout.php' class='btn btn-warning'>Logout</a> 
 					</p>
                     <div class='row'>
